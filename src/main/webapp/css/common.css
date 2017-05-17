@@ -1,0 +1,21 @@
+body {
+    background-color: #f7f7f7;
+}
+
+#header-bar-login, #header-bar-login:focus {
+    outline: none;
+}
+
+/*
+.pubfooter {
+    background-color: #f7f7f7;
+    width: 100%;
+    position: absolute;
+    margin-bottom: 0;
+    bottom: 0;
+    height: 20px;
+    font-size: small;
+    text-align: center;
+    line-height: 20px;
+    color: #9d9d9d;
+}*/

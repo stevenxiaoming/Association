@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.shu.association.dao.AssociationDao">
+    <select id="getAssociationNumber" resultType="int">
+        SELECT
+          COUNT(*)
+        FROM
+          association_main
+        WHERE
+          association_status <![CDATA[ < ]]> 2
+          <if test="star > 0 and star != null">
+            AND star = #{star}
+          </if>
+          <if test="type != '' and type != null">
+            AND type = #{type}
+          </if>
+          <if test="name != '' and name != null">
+            AND association_name LIKE '%${name}%';
+          </if>
+    </select>
+
+    <select id="getAssociationList" resultType="Association">
+        SELECT
+          association_id,
+          association_name,
+          type,
+          star,
+          association_status,
+          logo,
+          word_introduction
+        FROM
+          association_main
+        WHERE
+          association_status <![CDATA[ < ]]> 2
+          <if test="star > 0 and star != null">
+            AND star = #{star}
+          </if>
+          <if test="type != '' and type != null">
+            AND type = #{type}
+          </if>
+          <if test="name != '' and name != null">
+            AND association_name LIKE '%${name}%'
+          </if>
+        ORDER BY
+          star DESC,
+          association_id ASC
+        limit #{offset}, #{pageSize};
+    </select>
+
+    <select id="getAssociationDetailById" resultType="Association">
+        SELECT
+          am.association_id,
+          am.association_name,
+          am.type,
+          am.star,
+          am.association_department,
+          am.instructor,
+          am.association_status,
+          am.nick_name,
+          am.logo,
+          am.word_introduction,
+          ai.introduction,
+          am.association_email,
+          am.wechat_id,
+          am.wechat_name,
+          am.wechat_code,
+          am.association_qq,
+          am.apply_status,
+          am.gmt_create,
+          am.gmt_modified
+        FROM
+          association_main am
+        INNER JOIN
+          association_introduction ai
+        ON
+          am.association_id = ai.association_id
+        WHERE
+          am.association_id = #{associationId}
+    </select>
+    
+    <insert id="insertAssociationMain" keyProperty="association.associationId" parameterType="Association">
+        INSERT INTO
+          association_main
+          (association_name,
+          type,
+          star,
+          association_department,
+          instructor,
+          association_status,
+          nick_name,
+          logo,
+          word_introduction,
+          association_email,
+          wechat_id,
+          wechat_name,
+          wechat_code,
+          association_qq,
+          apply_status,
+          gmt_create,
+          gmt_modified)
+        VALUES
+          (#{association.name},
+          #{association.type},
+          #{association.star},
+          #{association.department},
+          #{association.instructor},
+          #{association.associationStatus},
+          #{association.nickName},
+          #{association.logo},
+          #{association.wordIntroduction},
+          #{association.email},
+          #{association.wechatId},
+          #{association.wechatName},
+          #{association.wechatCode},
+          #{association.qq},
+          #{association.applyStatus},
+          #{association.gmtCreate},
+          #{association.gmtModified});
+    </insert>
+
+    <insert id="insertAssociationIntroduction" parameterType="Association">
+        INSERT INTO
+          association_introduction
+        VALUES
+          (#{association.associationId},
+          #{association.introduction},
+          #{association.gmtCreate},
+          #{association.gmtModified});
+    </insert>
+
+    <update id="updateAssociationEssential" parameterType="Association">
+        UPDATE
+          association_main
+        SET
+          name = #{association.name},
+          type = #{association.type},
+          star = #{association.star},
+          association_department = #{association.department},
+          instructor = #{association.instructor},
+          association_status = #{association.associationStatus},
+          gmt_modified = #{association.gmtModified}
+        WHERE
+          association_id = #{association.associationId};
+    </update>
+
+    <update id="updateAssociationBasic" parameterType="Association">
+        UPDATE
+          association_main
+        SET
+          nick_name = #{association.nickName},
+          logo = #{association.logo},
+          word_introduction = #{association.wordIntroduction},
+          association_email = #{association.email},
+          wechat_id = #{association.wechatId},
+          wechat_name = #{association.wechatName},
+          wechat_code = #{association.wechatCode},
+          association_qq = #{association.qq},
+          apply_status = #{association.applyStatus},
+          gmt_modified = #{association.gmtModified}
+        WHERE
+          association_id = #{association.associationId};
+    </update>
+
+    <update id="updateAssociationIntroduction" parameterType="Association">
+        UPDATE
+          association_introduction
+        SET
+          introduction = #{association.introduction},
+          gmt_modified = #{association.gmtModified}
+        WHERE
+          association_id = #{association.associationId};
+    </update>
+
+    <delete id="deleteAssociationMain">
+        DELETE FROM
+          association_main
+        WHERE
+          association_id = #{associationId};
+    </delete>
+
+    <delete id="deleteAssociationIntroduction">
+        DELETE FROM
+          association_introduction
+        WHERE
+          association_id = #{associationId};
+    </delete>
+</mapper>
